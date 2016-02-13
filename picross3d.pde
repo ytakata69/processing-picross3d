@@ -3,20 +3,9 @@
  * 3D Picross instances.
  *
  * <ul>
- * <li>Drag the mouse: change the camera position.</li>
- * <li>Drag the mouse up or down with pressing shift: zoom in &amp; out.</li>
+ * <li>Drag: change the camera position.</li>
+ * <li>Drag up/down + shift: zoom in/out.</li>
  * <li>Press 'a': show the answer.</li>
- * </ul>
- * <p>
- * References:</p>
- * <ul>
- * <li>Nintendo. "Rittai-Picross,"<br/>
- *   https://www.nintendo.co.jp/ds/c6pj/
- * </li>
- * <li>Kusano, et al. "Picross 3D is NP-complete,"
- *   15th Game Programming Workshop, 108--113, 2010.<br/>
- *   https://ipsj.ixsq.nii.ac.jp/ej/?action=repository_uri&item_id=71326&file_id=1&file_no=1
- * </li>
  * </ul>
  */
 
