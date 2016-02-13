@@ -1,8 +1,10 @@
 class Camera {
+  // the center point of the scene
   final float ox = width  / 2;
   final float oy = height / 2;
   final float oz = 0;
 
+  // the eye position in the polar coordinates
   float distance = height * .7;
   float latitude  = HALF_PI;
   float longitude = HALF_PI;

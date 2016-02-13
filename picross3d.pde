@@ -1,7 +1,32 @@
+/**
+ * A program for illustrating
+ * 3D Picross instances.
+ *
+ * <ul>
+ * <li>Drag the mouse: change the camera position.</li>
+ * <li>Drag the mouse up or down with pressing shift: zoom in &amp; out.</li>
+ * <li>Press 'a': show the answer.</li>
+ * </ul>
+ * <p>
+ * References:</p>
+ * <ul>
+ * <li>Nintendo. "Rittai-Picross,"<br/>
+ *   https://www.nintendo.co.jp/ds/c6pj/
+ * </li>
+ * <li>Kusano, et al. "Picross 3D is NP-complete,"
+ *   15th Game Programming Workshop, 108--113, 2010.<br/>
+ *   https://ipsj.ixsq.nii.ac.jp/ej/?action=repository_uri&item_id=71326&file_id=1&file_no=1
+ * </li>
+ * </ul>
+ */
+
+// Define the hints.
 final int S2 = (1 << 8); // circle
 final int S3 = (2 << 8); // square
 final int _ = -1;        // epsilon
 
+// The following Picross instance
+// is cited from [Kusano+2010].
 int[][] F = {
   { 3,    3,    3|S2 },
   { 2,    1,    2|S2 },
@@ -64,6 +89,7 @@ final int FRONT = 0;
 final int SIDE  = 1;
 final int TOP   = 2;
 
+// the size of a cube in the xyz-space
 final float CUBEW = 30;
 
 View view;
@@ -78,10 +104,12 @@ void setup(){
 void draw(){
   background(204);
 
+  // lightings
   lights();
   directionalLight(128, 128, 128, -1, 2, -2);
   pointLight(128, 128, 128, W * 1.5 * CUBEW, -H * 1.5 * CUBEW, D * 1.5 * CUBEW);
 
+  // camera position and zoom in/out
   if (mousePressed) {
     if (keyPressed && key == CODED &&
         keyCode == SHIFT)
@@ -93,6 +121,7 @@ void draw(){
   }
   camera.setCamera();
 
+  // cubes
   translate(width/2, height/2, 0);
   drawCubes();
 }

@@ -1,4 +1,6 @@
+// The set of drawing functions
 class View {
+  // Draw the base plane. (not used now)
   void drawBase() {
     int margin = min(W, D);
     pushMatrix();
@@ -11,6 +13,7 @@ class View {
     popMatrix();
   }
 
+  // Draw a single cube.
   void drawCube(int x, int y, int z) {
     x -= int(W/2);
     y -= int(H/2);
@@ -22,6 +25,7 @@ class View {
     popMatrix();
   }
 
+  // Draw a hint.
   void drawHint(int x, int y, int z, int face, int h) {
     if (h == _) return;
     x -= int(W/2);
