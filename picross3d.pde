@@ -16,21 +16,21 @@ final int _ = -1;        // epsilon
 
 // The following Picross instance
 // is cited from [Kusano+2010].
-int[][] F = {
+final int[][] F = {
   { 3,    3,    3|S2 },
   { 2,    1,    2|S2 },
   { 3,    2|S2, 3 },
   { 2|S2, 2,    2 },
   { _,    3|S2, 3|S2 },
 };
-int[][] S = {
+final int[][] S = {
   { _, _, _, 1 },
   { 1, _, 1, 1 },
   { 1, _, _, _ },
   { 1, 2, _, _ },
   { _, 1, _, _ },
 };
-int[][] T = {
+final int[][] T = {
   { 3,    1,    _ },
   { 4|S2, 3|S3, _ },
   { _,    2|S2, 2 },
@@ -40,7 +40,7 @@ int[][] T = {
 final boolean _0 = false;
 final boolean _1 = true;
 
-boolean[][][] P = {
+final boolean[][][] P = {
   {
     { _1, _1, _1 },
     { _0, _1, _0 },
@@ -95,23 +95,22 @@ void draw(){
 
   // lightings
   lights();
-  directionalLight(128, 128, 128, -1, 2, -2);
-  pointLight(128, 128, 128, W * 1.5 * CUBEW, -H * 1.5 * CUBEW, D * 1.5 * CUBEW);
+  directionalLight(64, 64, 64, -1, 2, -2);
+  pointLight(255, 255, 255, W * 1.5 * CUBEW, -H * 1.5 * CUBEW, D * 1.5 * CUBEW);
 
-  // camera position and zoom in/out
+  // rotation and zoom in/out
   if (mousePressed) {
     if (keyPressed && key == CODED &&
         keyCode == SHIFT)
     {
       camera.zoom(mouseY - pmouseY);
     } else {
-      camera.move(mouseX - pmouseX, mouseY - pmouseY);
+      view.rotate(mouseX - pmouseX, mouseY - pmouseY);
     }
   }
   camera.setCamera();
 
   // cubes
-  translate(width/2, height/2, 0);
   drawCubes();
 }
 

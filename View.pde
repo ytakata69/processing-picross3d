@@ -1,25 +1,28 @@
 // The set of drawing functions
 class View {
-  // Draw the base plane. (not used now)
-  void drawBase() {
-    int margin = min(W, D);
-    pushMatrix();
-    rotateX(HALF_PI);
-    translate(0, 0, -(D/2 + 0.5) * CUBEW - 1);
-    noStroke();
-    fill(255);
-    rect(-(W/2 + 0.5 + margin) * CUBEW, -(D/2 + 0.5 + margin) * CUBEW, (2 * margin + W) * CUBEW, (2 * margin + D) * CUBEW);
-    stroke(0);
-    popMatrix();
+  float latitude  = 0;
+  float longitude = 0;
+
+  void rotate(float vx, float vy) {
+    latitude  += map(vx, 0, width,  0, PI);
+    longitude -= map(vy, 0, height, 0, PI);
+//  longitude = constrain(longitude, radians(1), radians(179));
+  }
+
+  // Set the model view matrix for a cube at (x,y,z).
+  private void setView(int x, int y, int z) {
+    rotateX(longitude);
+    rotateY(latitude);
+    x -= int(W/2);
+    y -= int(H/2);
+    z -= int(D/2);
+    translate(x * CUBEW, y * CUBEW, z * CUBEW);
   }
 
   // Draw a single cube.
   void drawCube(int x, int y, int z) {
-    x -= int(W/2);
-    y -= int(H/2);
-    z -= int(D/2);
     pushMatrix();
-    translate(x * CUBEW, y * CUBEW, z * CUBEW);
+    setView(x, y, z);
     fill(255);
     box(CUBEW);
     popMatrix();
@@ -28,11 +31,8 @@ class View {
   // Draw a hint.
   void drawHint(int x, int y, int z, int face, int h) {
     if (h == _) return;
-    x -= int(W/2);
-    y -= int(H/2);
-    z -= int(D/2);
     pushMatrix();
-    translate(x * CUBEW, y * CUBEW, z * CUBEW);
+    setView(x, y, z);
     if (face == SIDE) {
       rotateY(HALF_PI);
     } else if (face == TOP) {
