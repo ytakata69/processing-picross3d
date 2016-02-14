@@ -3,6 +3,7 @@ class View {
   float latitude  = 0;
   float longitude = 0;
 
+  // Rotate the cubes.
   void rotate(float vx, float vy) {
     latitude  += map(vx, 0, width,  0, PI);
     longitude -= map(vy, 0, height, 0, PI);
@@ -23,7 +24,12 @@ class View {
   void drawCube(int x, int y, int z) {
     pushMatrix();
     setView(x, y, z);
-    fill(255);
+
+    if (x == cursorX && y == cursorY && z == cursorZ) {
+      fill(255, 0, 0);
+    } else {
+      fill(255);
+    }
     box(CUBEW);
     popMatrix();
   }
@@ -53,6 +59,54 @@ class View {
       rect(-d/2, -d/2, d, d);
     }
     popMatrix();
+  }
+
+  // Distance between the camera and a given cube.
+  float cubeDist(int x, int y, int z) {
+    pushMatrix();
+    setView(x, y, z);
+    PVector eye = getEyePosition();
+    popMatrix();
+    return eye.dist(centerPos);
+  }
+
+  final PVector centerPos = new PVector(0, 0, 0);
+  final PVector[] unitVecs = { 
+    new PVector(1, 0, 0),
+    new PVector(0, 1, 0),
+    new PVector(0, 0, 1)
+  };
+
+  // Is a given cube is touched by the mouse?
+  boolean isTouched(int x, int y, int z) {
+    pushMatrix();
+    setView(x, y, z);
+    boolean touched = false;
+    for (int i = 0; i < unitVecs.length; i++) {
+      PVector mousePos = getUnProjectedPointOnFloor(mouseX, mouseY, centerPos, unitVecs[i]);
+      touched |= (-CUBEW/2 < mousePos.x && mousePos.x < CUBEW/2 &&
+                  -CUBEW/2 < mousePos.y && mousePos.y < CUBEW/2 &&
+                  -CUBEW/2 < mousePos.z && mousePos.z < CUBEW/2);
+    }
+    popMatrix();
+    return touched;
+  }
+
+  // Position of the cube under the mouse cursor.
+  int cursorX = -1;
+  int cursorY = -1;
+  int cursorZ = -1;
+
+  void resetCursor() {
+    cursorX = -1;
+    cursorY = -1;
+    cursorZ = -1;
+  }
+
+  void setCursor(int x, int y, int z) {
+    cursorX = x;
+    cursorY = y;
+    cursorZ = z;
   }
 }
 

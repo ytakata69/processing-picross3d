@@ -111,6 +111,7 @@ void draw(){
   camera.setCamera();
 
   // cubes
+  setCursorCube();
   drawCubes();
 }
 
@@ -124,6 +125,33 @@ void keyTyped() {
 
 boolean showCube(int x, int y, int z) {
   return !showAnswer || P[D-1-z][y][x];
+}
+
+void setCursorCube() {
+  int minX = 0;
+  int minY = 0;
+  int minZ = 0;
+  float minD = MAX_FLOAT;
+  for (int x = 0; x < W; x++) {
+    for (int y = 0; y < H; y++) {
+      for (int z = 0; z < D; z++) {
+        if (showCube(x, y, z) && view.isTouched(x, y, z)) {
+          float d = view.cubeDist(x, y, z);
+          if (minD > d) {
+            minD = d;
+            minX = x;
+            minY = y;
+            minZ = z;
+          }
+        }
+      }
+    }
+  }
+  if (minD < MAX_FLOAT) {
+    view.setCursor(minX, minY, minZ);
+  } else {
+    view.resetCursor();
+  }
 }
 
 void drawCubes() {
