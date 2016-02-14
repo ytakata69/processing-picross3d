@@ -98,7 +98,11 @@ void setup(){
 }
 
 void draw(){
-  background(204);
+  if (model.isAnswer()) {
+    background(255, 180, 128);
+  } else {
+    background(204);
+  }
 
   // lightings
   lights();
@@ -139,5 +143,16 @@ void keyTyped() {
   else if (key == 'r' || key == 'R') {
     model.reset();
   }
+}
+
+boolean hintIsEpsilon(int h) {
+    return h == _;
+}
+int hintN(int h) {
+  return h & 0xff;
+}
+int hintSeg(int h) {
+  return (h & S2) != 0 ? 2 :
+         (h & S3) != 0 ? 3 : 1;
 }
 

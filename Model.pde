@@ -85,5 +85,58 @@ class Model {
       }
     }
   }
+
+  // Check the conformity to the hints.
+  boolean isAnswer() {
+    int[][] nF    = new int[H][W];
+    int[][] nS    = new int[H][D];
+    int[][] nT    = new int[D][W];
+    int[][] nSegF = new int[H][W];
+    int[][] nSegS = new int[H][D];
+    int[][] nSegT = new int[D][W];
+    for (int x = 0; x < W; x++) {
+      for (int y = 0; y < H; y++) {
+        for (int z = 0; z < D; z++) {
+          if (cubeExists(x, y, z)) {
+            nF[y][x]++;
+            nS[y][z]++;
+            nT[z][x]++;
+            nSegF[y][x] += (z == 0 || ! cubeExists(x, y, z-1) ? 1 : 0);
+            nSegS[y][z] += (x == 0 || ! cubeExists(x-1, y, z) ? 1 : 0);
+            nSegT[z][x] += (y == 0 || ! cubeExists(x, y-1, z) ? 1 : 0);
+          }
+        }
+      }
+    }
+    for (int x = 0; x < W; x++) {
+      for (int y = 0; y < H; y++) {
+        int h = F[y][x];
+        if (! hintIsEpsilon(h) &&
+            (nF[y][x] != hintN(h) || min(nSegF[y][x], 3) != hintSeg(h)))
+        {
+          return false;
+        }
+      }
+      for (int z = 0; z < D; z++) {
+        int h = T[z][x];
+        if (! hintIsEpsilon(h) &&
+            (nT[z][x] != hintN(h) || min(nSegT[z][x], 3) != hintSeg(h)))
+        {
+          return false;
+        }
+      }
+    }
+    for (int y = 0; y < H; y++) {
+      for (int z = 0; z < D; z++) {
+        int h = S[y][D-1-z];
+        if (! hintIsEpsilon(h) &&
+            (nS[y][z] != hintN(h) || min(nSegS[y][z], 3) != hintSeg(h)))
+        {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 }
 

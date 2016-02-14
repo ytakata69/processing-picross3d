@@ -31,7 +31,7 @@ class View {
 
   // Draw a hint.
   void drawHint(int x, int y, int z, int face, int h) {
-    if (h == _) return;
+    if (hintIsEpsilon(h)) return;
     pushMatrix();
     setView(x, y, z);
     if (face == SIDE) {
@@ -43,13 +43,13 @@ class View {
     textSize(CUBEW * .7);
     textAlign(CENTER, CENTER);
     translate(0, 0, CUBEW/2 + 1);
-    text(h & 255, 0, -.1 * CUBEW, 0);
+    text(hintN(h), 0, -.1 * CUBEW, 0);
     noFill();
-    if ((h & S2) != 0) {
+    if (hintSeg(h) == 2) {
       float d = CUBEW * .8;
       ellipse(0, 0, d, d);
     }
-    if ((h & S3) != 0) {
+    else if (hintSeg(h) == 3) {
       float d = CUBEW * .72;
       rect(-d/2, -d/2, d, d);
     }
