@@ -3,12 +3,12 @@
 A program for illustrating 3D Picross instances.
 
 ## Usage
-* Drag: change the camera position.
-* Drag up/down + shift: zoom in/out.
-* Click + control: erase a cube.
-* Press 'u': undo.
-* Press 'r': reset.
-* Press 'a': show the answer.
+* Drag: Rotate the model.
+* Shift + Drag up/down: Zoom in/out.
+* Ctrl + Click: Erase a cube.
+* Press 'u': Undo.
+* Press 'r': Reset the model.
+* Press 'a': Show the answer.
 
 
 ## References
