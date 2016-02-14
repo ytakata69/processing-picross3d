@@ -24,12 +24,7 @@ class View {
   void drawCube(int x, int y, int z) {
     pushMatrix();
     setView(x, y, z);
-
-    if (x == cursorX && y == cursorY && z == cursorZ) {
-      fill(255, 0, 0);
-    } else {
-      fill(255);
-    }
+    fill(255);
     box(CUBEW);
     popMatrix();
   }
@@ -90,23 +85,6 @@ class View {
     }
     popMatrix();
     return touched;
-  }
-
-  // Position of the cube under the mouse cursor.
-  int cursorX = -1;
-  int cursorY = -1;
-  int cursorZ = -1;
-
-  void resetCursor() {
-    cursorX = -1;
-    cursorY = -1;
-    cursorZ = -1;
-  }
-
-  void setCursor(int x, int y, int z) {
-    cursorX = x;
-    cursorY = y;
-    cursorZ = z;
   }
 }
 

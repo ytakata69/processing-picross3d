@@ -5,6 +5,9 @@
  * <ul>
  * <li>Drag: change the camera position.</li>
  * <li>Drag up/down + shift: zoom in/out.</li>
+ * <li>Click + control: erase a cube.</li>
+ * <li>Press 'u': undo.</li>
+ * <li>Press 'r': reset.</li>
  * <li>Press 'a': show the answer.</li>
  * </ul>
  */
@@ -74,6 +77,8 @@ final boolean[][][] P = {
 final int W = F[0].length;
 final int H = F.length;
 final int D = T.length;
+
+// labels for each face.
 final int FRONT = 0;
 final int SIDE  = 1;
 final int TOP   = 2;
@@ -81,12 +86,14 @@ final int TOP   = 2;
 // the size of a cube in the xyz-space
 final float CUBEW = 30;
 
+Model model;
 View view;
 Camera camera;
 
 void setup(){
   size(400, 400, P3D);
-  view = new View();
+  model  = new Model();
+  view   = new View();
   camera = new Camera();
 }
 
@@ -111,67 +118,26 @@ void draw(){
   camera.setCamera();
 
   // cubes
-  setCursorCube();
-  drawCubes();
+  model.draw(view);
 }
 
-boolean showAnswer = false;
+void mousePressed() {
+  if (keyPressed && key == CODED &&
+      keyCode == CONTROL)
+  {
+    model.eraseCubeAtCursor(view);
+  }
+}
 
 void keyTyped() {
   if (key == 'a' || key == 'A') {
-    showAnswer = ! showAnswer;
+    model.setAnswer(P);
   }
-}
-
-boolean showCube(int x, int y, int z) {
-  return !showAnswer || P[D-1-z][y][x];
-}
-
-void setCursorCube() {
-  int minX = 0;
-  int minY = 0;
-  int minZ = 0;
-  float minD = MAX_FLOAT;
-  for (int x = 0; x < W; x++) {
-    for (int y = 0; y < H; y++) {
-      for (int z = 0; z < D; z++) {
-        if (showCube(x, y, z) && view.isTouched(x, y, z)) {
-          float d = view.cubeDist(x, y, z);
-          if (minD > d) {
-            minD = d;
-            minX = x;
-            minY = y;
-            minZ = z;
-          }
-        }
-      }
-    }
+  else if (key == 'u' || key == 'U') {
+    model.undo();
   }
-  if (minD < MAX_FLOAT) {
-    view.setCursor(minX, minY, minZ);
-  } else {
-    view.resetCursor();
-  }
-}
-
-void drawCubes() {
-  for (int x = 0; x < W; x++) {
-    for (int y = 0; y < H; y++) {
-      for (int z = 0; z < D; z++) {
-        if (showCube(x, y, z)) {
-          view.drawCube(x, y, z);
-          if (z == D-1 || ! showCube(x, y, z+1)) {
-            view.drawHint(x, y, z, FRONT, F[y][x]);
-          }
-          if (x == W-1 || ! showCube(x+1, y, z)) {
-            view.drawHint(x, y, z, SIDE, S[y][D-1-z]);
-          }
-          if (y == 0 || ! showCube(x, y-1, z)) {
-            view.drawHint(x, y, z, TOP, T[z][x]);
-          }
-        }
-      }
-    }
+  else if (key == 'r' || key == 'R') {
+    model.reset();
   }
 }
 
