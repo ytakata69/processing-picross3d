@@ -1,6 +1,7 @@
 // The set of cubes
 class Model {
   boolean[] body = new boolean[W * H * D];
+  boolean[] mark = new boolean[W * H * D];
 
   Model() {
     reset();
@@ -38,6 +39,17 @@ class Model {
   }
 
   void eraseCubeAtCursor(View view) {
+    eraseCube(cubeAtCursor(view));
+  }
+
+  void markCubeAtCursor(View view) {
+    int pos = cubeAtCursor(view);
+    if (cubeExists(pos)) {
+      mark[pos] = ! mark[pos];
+    }
+  }
+
+  int cubeAtCursor(View view) {
     float minD = MAX_FLOAT;
     int minPos = -1;
     for (int i = 0; i < body.length; i++) {
@@ -52,9 +64,7 @@ class Model {
         }
       }
     }
-    if (minD < MAX_FLOAT) {
-      eraseCube(minPos);
-    }
+    return minD < MAX_FLOAT ? minPos : -1;
   }
 
   boolean cubeExists(int pos) {
@@ -72,7 +82,7 @@ class Model {
         int x = i % W;
         int y = int(i / W) % H;
         int z = int(i / W / H);
-        view.drawCube(x, y, z);
+        view.drawCube(x, y, z, mark[i]);
         if (z == D-1 || ! cubeExists(x, y, z+1)) {
           view.drawHint(x, y, z, FRONT, F[y][x]);
         }

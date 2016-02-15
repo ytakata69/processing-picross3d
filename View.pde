@@ -21,10 +21,14 @@ class View {
   }
 
   // Draw a single cube.
-  void drawCube(int x, int y, int z) {
+  void drawCube(int x, int y, int z, boolean marked) {
     pushMatrix();
     setView(x, y, z);
-    fill(255);
+    if (marked) {
+      fill(255, 100, 100);
+    } else {
+      fill(255);
+    }
     box(CUBEW);
     popMatrix();
   }

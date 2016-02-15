@@ -126,10 +126,13 @@ void draw(){
 }
 
 void mousePressed() {
-  if (keyPressed && key == CODED &&
-      keyCode == CONTROL)
-  {
-    model.eraseCubeAtCursor(view);
+  if (keyPressed && key == CODED) {
+    if (keyCode == CONTROL) {
+      model.eraseCubeAtCursor(view);
+    }
+    else if (keyCode == ALT) {
+      model.markCubeAtCursor(view);
+    }
   }
 }
 
