@@ -6,6 +6,7 @@ A program for illustrating 3D Picross instances.
 * Drag: Rotate the model.
 * Shift + Drag up/down: Zoom in/out.
 * Ctrl + Click: Erase a cube.
+* Alt  + Click: Mark a cube.
 * Press 'u': Undo.
 * Press 'r': Reset the model.
 * Press 'a': Show the answer.

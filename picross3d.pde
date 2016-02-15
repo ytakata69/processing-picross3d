@@ -3,12 +3,13 @@
  * 3D Picross instances.
  *
  * <ul>
- * <li>Drag: change the camera position.</li>
- * <li>Drag up/down + shift: zoom in/out.</li>
- * <li>Click + control: erase a cube.</li>
- * <li>Press 'u': undo.</li>
- * <li>Press 'r': reset.</li>
- * <li>Press 'a': show the answer.</li>
+ * <li>Drag: Rotate the model.</li>
+ * <li>Shift + Drag up/down: Zoom in/out.</li>
+ * <li>Ctrl + Click: Erase a cube.</li>
+ * <li>Alt  + Click: Mark a cube.</li>
+ * <li>Press 'u': Undo.</li>
+ * <li>Press 'r': Reset the model.</li>
+ * <li>Press 'a': Show the answer.</li>
  * </ul>
  */
 
