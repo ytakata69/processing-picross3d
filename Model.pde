@@ -22,19 +22,21 @@ class Model {
     }
   }
 
-  int lastErased = -1;
+  IntList undoBuffer = new IntList();
 
   void eraseCube(int pos) {
     if (cubeExists(pos)) {
       body[pos] = false;
-      lastErased = pos;
+      undoBuffer.append(pos);
+      println(undoBuffer.size() + ": " + pos);
     }
   }
 
   void undo() {
-    if (lastErased >= 0) {
+    if (undoBuffer.size() > 0) {
+      int lastErased = undoBuffer.remove(undoBuffer.size() - 1);
       body[lastErased] = true;
-      lastErased = -1;
+      println("undo: " + lastErased);
     }
   }
 
