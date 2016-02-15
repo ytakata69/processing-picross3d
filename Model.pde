@@ -11,6 +11,12 @@ class Model {
     for (int i = 0; i < body.length; i++) {
       body[i] = true;
     }
+    resetMark();
+  }
+  void resetMark() {
+    for (int i = 0; i < mark.length; i++) {
+      mark[i] = false;
+    }
   }
 
   void setAnswer(boolean[][][] P) {

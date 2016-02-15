@@ -99,6 +99,7 @@ void setup(){
 
 void draw(){
   if (model.isAnswer()) {
+    model.resetMark();
     background(255, 180, 128);
   } else {
     background(204);
