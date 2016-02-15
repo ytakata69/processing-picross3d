@@ -10,6 +10,7 @@
  * <li>Press 'u': Undo.</li>
  * <li>Press 'r': Reset the model.</li>
  * <li>Press 'a': Show the answer.</li>
+ * <li>Press '0': Erase the cubes in the row with hint "0".</li>
  * </ul>
  */
 
@@ -147,6 +148,9 @@ void keyTyped() {
   }
   else if (key == 'r' || key == 'R') {
     model.reset();
+  }
+  else if (key == '0') {
+    model.eraseZero();
   }
 }
 

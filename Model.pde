@@ -117,15 +117,15 @@ class Model {
         int h = hnt[i][j];
         if (hintIsEpsilon(h)) continue;
         boolean conf =
-          (face == FRONT ? lineConformsToHint(h, j, i, 0,     0, 0, 1, D)
-          :face == SIDE  ? lineConformsToHint(h, 0, i, D-1-j, 1, 0, 0, W)
-                         : lineConformsToHint(h, j, 0, i,     0, 1, 0, H));
+          (face == FRONT ? rowConformsToHint(h, j, i, 0,     0, 0, 1, D)
+          :face == SIDE  ? rowConformsToHint(h, 0, i, D-1-j, 1, 0, 0, W)
+                         : rowConformsToHint(h, j, 0, i,     0, 1, 0, H));
         if (! conf) { return false; }
       }
     }
     return true;
   }
-  private boolean lineConformsToHint(int h, int x, int y, int z, int vx, int vy, int vz, int depth) {
+  private boolean rowConformsToHint(int h, int x, int y, int z, int vx, int vy, int vz, int depth) {
     int n = 0;
     int nSeg = 0;
     boolean prev = false;
@@ -142,6 +142,38 @@ class Model {
       z += vz;
     }
     return n == hintN(h) && (n == 0 || min(nSeg, 3) == hintSeg(h));
+  }
+
+  // Erase the cubes in the rows with the hint zero.
+  void eraseZero() {
+    eraseZeroRows(F, FRONT);
+    eraseZeroRows(S, SIDE);
+    eraseZeroRows(T, TOP);
+  }
+  private void eraseZeroRows(int[][] hnt, int face) {
+    for (int i = 0; i < hnt.length; i++) {
+      for (int j = 0; j < hnt[i].length; j++) {
+        int h = hnt[i][j];
+        if (hintIsEpsilon(h) || hintN(h) != 0) continue;
+        if (face == FRONT) {
+          eraseZeroRow(j, i, 0,     0, 0, 1, D);
+        } else if (face == SIDE) {
+          eraseZeroRow(0, i, D-1-j, 1, 0, 0, W);
+        } else {
+          eraseZeroRow(j, 0, i,     0, 1, 0, H);
+        }
+      }
+    }
+  }
+  private void eraseZeroRow(int x, int y, int z, int vx, int vy, int vz, int depth) {
+    for (int i = 0; i < depth; i++) {
+      if (cubeExists(x, y, z)) {
+        eraseCube(x + W * (y + H * z));
+      }
+      x += vx;
+      y += vy;
+      z += vz;
+    }
   }
 }
 
