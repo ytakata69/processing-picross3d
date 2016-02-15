@@ -88,55 +88,42 @@ class Model {
 
   // Check the conformity to the hints.
   boolean isAnswer() {
-    int[][] nF    = new int[H][W];
-    int[][] nS    = new int[H][D];
-    int[][] nT    = new int[D][W];
-    int[][] nSegF = new int[H][W];
-    int[][] nSegS = new int[H][D];
-    int[][] nSegT = new int[D][W];
-    for (int x = 0; x < W; x++) {
-      for (int y = 0; y < H; y++) {
-        for (int z = 0; z < D; z++) {
-          if (cubeExists(x, y, z)) {
-            nF[y][x]++;
-            nS[y][z]++;
-            nT[z][x]++;
-            nSegF[y][x] += (z == 0 || ! cubeExists(x, y, z-1) ? 1 : 0);
-            nSegS[y][z] += (x == 0 || ! cubeExists(x-1, y, z) ? 1 : 0);
-            nSegT[z][x] += (y == 0 || ! cubeExists(x, y-1, z) ? 1 : 0);
-          }
-        }
-      }
-    }
-    for (int x = 0; x < W; x++) {
-      for (int y = 0; y < H; y++) {
-        int h = F[y][x];
-        if (! hintIsEpsilon(h) &&
-            (nF[y][x] != hintN(h) || min(nSegF[y][x], 3) != hintSeg(h)))
-        {
-          return false;
-        }
-      }
-      for (int z = 0; z < D; z++) {
-        int h = T[z][x];
-        if (! hintIsEpsilon(h) &&
-            (nT[z][x] != hintN(h) || min(nSegT[z][x], 3) != hintSeg(h)))
-        {
-          return false;
-        }
-      }
-    }
-    for (int y = 0; y < H; y++) {
-      for (int z = 0; z < D; z++) {
-        int h = S[y][D-1-z];
-        if (! hintIsEpsilon(h) &&
-            (nS[y][z] != hintN(h) || min(nSegS[y][z], 3) != hintSeg(h)))
-        {
-          return false;
-        }
+    return conformsToHint(F, FRONT)
+        && conformsToHint(S, SIDE)
+        && conformsToHint(T, TOP);
+  }
+
+  private boolean conformsToHint(int[][] hnt, int face) {
+    for (int i = 0; i < hnt.length; i++) {
+      for (int j = 0; j < hnt[i].length; j++) {
+        int h = hnt[i][j];
+        if (hintIsEpsilon(h)) continue;
+        boolean conf =
+          (face == FRONT ? lineConformsToHint(h, j, i, 0,     0, 0, 1, D)
+          :face == SIDE  ? lineConformsToHint(h, 0, i, D-1-j, 1, 0, 0, W)
+                         : lineConformsToHint(h, j, 0, i,     0, 1, 0, H));
+        if (! conf) { return false; }
       }
     }
     return true;
+  }
+  private boolean lineConformsToHint(int h, int x, int y, int z, int vx, int vy, int vz, int depth) {
+    int n = 0;
+    int nSeg = 0;
+    boolean prev = false;
+    for (int i = 0; i < depth; i++) {
+      if (cubeExists(x, y, z)) {
+        n++;
+        if (! prev) { nSeg++; }
+        prev = true;
+      } else {
+        prev = false;
+      }
+      x += vx;
+      y += vy;
+      z += vz;
+    }
+    return n == hintN(h) && min(nSeg, 3) == hintSeg(h);
   }
 }
 
