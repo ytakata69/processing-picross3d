@@ -141,7 +141,7 @@ class Model {
       y += vy;
       z += vz;
     }
-    return n == hintN(h) && min(nSeg, 3) == hintSeg(h);
+    return n == hintN(h) && (n == 0 || min(nSeg, 3) == hintSeg(h));
   }
 }
 
