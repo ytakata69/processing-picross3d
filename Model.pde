@@ -1,7 +1,7 @@
 // The set of cubes
 class Model {
   boolean[] body = new boolean[W * H * D];
-  boolean[] mark = new boolean[W * H * D];
+  int[]     mark = new int    [W * H * D];
 
   Model() {
     reset();
@@ -15,7 +15,7 @@ class Model {
   }
   void resetMark() {
     for (int i = 0; i < mark.length; i++) {
-      mark[i] = false;
+      mark[i] = MK_NORMAL;
     }
   }
 
@@ -53,7 +53,7 @@ class Model {
   void markCubeAtCursor(View view) {
     int pos = cubeAtCursor(view);
     if (cubeExists(pos)) {
-      mark[pos] = ! mark[pos];
+      mark[pos] = (mark[pos] == MK_MARKED ? MK_NORMAL : MK_MARKED);
     }
   }
 
@@ -144,31 +144,43 @@ class Model {
     return n == hintN(h) && (n == 0 || min(nSeg, 3) == hintSeg(h));
   }
 
+  // Make the cubes with hint zero transparent.
+  void clearZero() {
+    eraseZeroRows(F, FRONT, false);
+    eraseZeroRows(S, SIDE,  false);
+    eraseZeroRows(T, TOP,   false);
+  }
+
   // Erase the cubes in the rows with the hint zero.
   void eraseZero() {
-    eraseZeroRows(F, FRONT);
-    eraseZeroRows(S, SIDE);
-    eraseZeroRows(T, TOP);
+    eraseZeroRows(F, FRONT, true);
+    eraseZeroRows(S, SIDE,  true);
+    eraseZeroRows(T, TOP,   true);
   }
-  private void eraseZeroRows(int[][] hnt, int face) {
+  private void eraseZeroRows(int[][] hnt, int face, boolean erase) {
     for (int i = 0; i < hnt.length; i++) {
       for (int j = 0; j < hnt[i].length; j++) {
         int h = hnt[i][j];
         if (hintIsEpsilon(h) || hintN(h) != 0) continue;
         if (face == FRONT) {
-          eraseZeroRow(j, i, 0,     0, 0, 1, D);
+          eraseZeroRow(j, i, 0,     0, 0, 1, D, erase);
         } else if (face == SIDE) {
-          eraseZeroRow(0, i, D-1-j, 1, 0, 0, W);
+          eraseZeroRow(0, i, D-1-j, 1, 0, 0, W, erase);
         } else {
-          eraseZeroRow(j, 0, i,     0, 1, 0, H);
+          eraseZeroRow(j, 0, i,     0, 1, 0, H, erase);
         }
       }
     }
   }
-  private void eraseZeroRow(int x, int y, int z, int vx, int vy, int vz, int depth) {
+  private void eraseZeroRow(int x, int y, int z, int vx, int vy, int vz, int depth, boolean erase) {
     for (int i = 0; i < depth; i++) {
       if (cubeExists(x, y, z)) {
-        eraseCube(x + W * (y + H * z));
+        int pos = x + W * (y + H * z);
+        if (erase) {
+          eraseCube(pos);
+        } else {
+          mark[pos] = MK_CLEAR;
+        }
       }
       x += vx;
       y += vy;

@@ -10,7 +10,8 @@
  * <li>Press 'u': Undo.</li>
  * <li>Press 'r': Reset the model.</li>
  * <li>Press 'a': Show the answer.</li>
- * <li>Press '0': Erase the cubes in the row with hint "0".</li>
+ * <li>Press '0': Clear the cubes in the row with hint "0".</li>
+ * <li>Press ')': Erase the cubes in the row with hint "0".</li>
  * </ul>
  */
 
@@ -29,7 +30,7 @@ final int[][] F = {
   { _,    3|S2, 3|S2 },
 };
 final int[][] S = {
-  { _, _, _, 1 },
+  { _, _, _, 0 },
   { 1, _, 1, 1 },
   { 1, _, _, _ },
   { 1, 2, _, _ },
@@ -80,10 +81,15 @@ final int W = F[0].length;
 final int H = F.length;
 final int D = T.length;
 
-// labels for each face.
+// labels for each face
 final int FRONT = 0;
 final int SIDE  = 1;
 final int TOP   = 2;
+
+// labels for mark
+final int MK_NORMAL = 0;
+final int MK_MARKED = 1;
+final int MK_CLEAR  = 2;
 
 // the size of a cube in the xyz-space
 final float CUBEW = 30;
@@ -150,6 +156,9 @@ void keyTyped() {
     model.reset();
   }
   else if (key == '0') {
+    model.clearZero();
+  }
+  else if (key == ')') {
     model.eraseZero();
   }
 }
