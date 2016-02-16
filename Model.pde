@@ -64,8 +64,8 @@ class Model {
       int x = i % W;
       int y = int(i / W) % H;
       int z = int(i / W / H);
-      if (cubeExists(i) && view.isTouched(x, y, z)) {
-        float d = view.cubeDist(x, y, z);
+      if (cubeExists(i)) {
+        float d = view.distToTouchedPoint(x, y, z);
         if (minD > d) {
           minD   = d;
           minPos = i;

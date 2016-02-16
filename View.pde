@@ -66,35 +66,36 @@ class View {
     popMatrix();
   }
 
-  // Distance between the camera and a given cube.
-  float cubeDist(int x, int y, int z) {
-    pushMatrix();
-    setView(x, y, z);
-    PVector eye = getEyePosition();
-    popMatrix();
-    return eye.dist(centerPos);
-  }
-
-  final PVector centerPos = new PVector(0, 0, 0);
+  final PVector[][] cubePlanes = {
+    { new PVector(0.5 * CUBEW, 0, 0), new PVector(-0.5 * CUBEW, 0, 0) },
+    { new PVector(0, 0.5 * CUBEW, 0), new PVector(0, -0.5 * CUBEW, 0) },
+    { new PVector(0, 0, 0.5 * CUBEW), new PVector(0, 0, -0.5 * CUBEW) },
+  };
   final PVector[] unitVecs = { 
     new PVector(1, 0, 0),
     new PVector(0, 1, 0),
     new PVector(0, 0, 1)
   };
 
-  // Is a given cube is touched by the mouse?
-  boolean isTouched(int x, int y, int z) {
+  // Distance between the camera and a given cube.
+  float distToTouchedPoint(int x, int y, int z) {
+    float distance = MAX_FLOAT;
     pushMatrix();
     setView(x, y, z);
-    boolean touched = false;
+    PVector eye = getEyePosition();
     for (int i = 0; i < unitVecs.length; i++) {
-      PVector mousePos = getUnProjectedPointOnFloor(mouseX, mouseY, centerPos, unitVecs[i]);
-      touched |= (-CUBEW/2 < mousePos.x && mousePos.x < CUBEW/2 &&
-                  -CUBEW/2 < mousePos.y && mousePos.y < CUBEW/2 &&
-                  -CUBEW/2 < mousePos.z && mousePos.z < CUBEW/2);
+      for (int j = 0; j <= 1; j++) {
+        PVector mousePos = getUnProjectedPointOnFloor(mouseX, mouseY, cubePlanes[i][j], unitVecs[i]);
+        if (-CUBEW * .51 <= mousePos.x && mousePos.x <= CUBEW * .51 &&
+            -CUBEW * .51 <= mousePos.y && mousePos.y <= CUBEW * .51 &&
+            -CUBEW * .51 <= mousePos.z && mousePos.z <= CUBEW * .51)
+        {
+          distance = min(distance, eye.dist(mousePos));
+        }
+      }
     }
     popMatrix();
-    return touched;
+    return distance;
   }
 }
 
