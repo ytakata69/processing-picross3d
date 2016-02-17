@@ -40,9 +40,16 @@ class Model {
 
   void undo() {
     if (undoBuffer.size() > 0) {
-      int lastErased = undoBuffer.remove(undoBuffer.size() - 1);
-      body[lastErased] = true;
-      println("undo: " + lastErased);
+      int size = 1;
+      while (--size >= 0) {
+        int lastErased = undoBuffer.remove(undoBuffer.size() - 1);
+        if (lastErased < 0) {
+          size = -lastErased;
+          continue;
+        }
+        body[lastErased] = true;
+        println("undo: " + lastErased);
+      }
     }
   }
 
@@ -153,9 +160,14 @@ class Model {
 
   // Erase the cubes in the rows with the hint zero.
   void eraseZero() {
+    int usize = undoBuffer.size();
     eraseZeroRows(F, FRONT, true);
     eraseZeroRows(S, SIDE,  true);
     eraseZeroRows(T, TOP,   true);
+    usize = undoBuffer.size() - usize;
+    if (usize > 0) {
+      undoBuffer.append(-usize);
+    }
   }
   private void eraseZeroRows(int[][] hnt, int face, boolean erase) {
     for (int i = 0; i < hnt.length; i++) {
