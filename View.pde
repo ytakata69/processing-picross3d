@@ -14,10 +14,10 @@ class View {
   private void setView(int x, int y, int z) {
     rotateX(longitude);
     rotateY(latitude);
-    x -= int(W/2);
-    y -= int(H/2);
-    z -= int(D/2);
-    translate(x * CUBEW, y * CUBEW, z * CUBEW);
+    float cx = (x - (W - 1) * 0.5) * CUBEW;
+    float cy = (y - (H - 1) * 0.5) * CUBEW;
+    float cz = (z - (D - 1) * 0.5) * CUBEW;
+    translate(cx, cy, cz);
   }
 
   // Draw a single cube.
