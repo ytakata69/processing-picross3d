@@ -2,6 +2,12 @@
 
 A program for illustrating 3D Picross instances.
 
+## Install & Run
+1. Clone the repository or download the zip file.
+1. Rename the folder containing the .pde files "picross3d"
+   instead of "processing-picross3d".
+1. Open picross3d.pde in the Processing Development Environment and run it.
+
 ## Usage
 * Drag: Rotate the model.
 * Shift + Drag up/down: Zoom in/out.
@@ -10,6 +16,8 @@ A program for illustrating 3D Picross instances.
 * Press 'u': Undo.
 * Press 'r': Reset the model.
 * Press 'a': Show the answer.
+* Press '0': Make the cubes transparent in the rows with hint "0".
+* Press ')': Erase the cubes in the rows with hint "0".
 
 
 ## References

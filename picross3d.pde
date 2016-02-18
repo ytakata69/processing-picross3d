@@ -10,8 +10,8 @@
  * <li>Press 'u': Undo.</li>
  * <li>Press 'r': Reset the model.</li>
  * <li>Press 'a': Show the answer.</li>
- * <li>Press '0': Clear the cubes in the row with hint "0".</li>
- * <li>Press ')': Erase the cubes in the row with hint "0".</li>
+ * <li>Press '0': Make the cubes transparent in the rows with hint "0".</li>
+ * <li>Press ')': Erase the cubes in the rows with hint "0".</li>
  * </ul>
  */
 
