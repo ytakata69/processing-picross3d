@@ -1,4 +1,4 @@
-# twin “interlocks” for conveying the truth of a variable
+# twin "interlocks" for conveying the truth of a variable
 
 # FRONT
 . . . . 1 . . . .

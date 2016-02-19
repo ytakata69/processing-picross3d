@@ -1,4 +1,4 @@
-# an “interlock” for conveying the truth of a variable
+# an "interlock" for conveying the truth of a variable
 
 # FRONT
 . . . . . . . . .
