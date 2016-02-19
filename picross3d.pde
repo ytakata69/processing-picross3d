@@ -12,74 +12,33 @@
  * <li>Press 'a': Show the answer.</li>
  * <li>Press '0': Make the cubes transparent in the rows with hint "0".</li>
  * <li>Press ')': Erase the cubes in the rows with hint "0".</li>
+ * <li>Press 'F' or 'B': Move to another puzzle instance.</li>
  * </ul>
  */
+
+// Files that define Picross instances
+String[] files = {
+  "ipsj.txt",
+  "truth.txt",
+  "clause.txt",
+  "second-floor.txt",
+  "second-floor-mod.txt",
+  "interlock.txt",
+  "interlock-twin.txt",
+};
+int selectedFile = 0;
+
+// The hints in the front, side, and top faces
+int[][] F, S, T;
+// The dimensions
+int W, H, D;
+// An answer
+boolean[][][] P;
 
 // Define the hints.
 final int S2 = (1 << 8); // circle
 final int S3 = (2 << 8); // square
 final int _ = -1;        // epsilon
-
-// The following Picross instance
-// is cited from [Kusano+2010].
-final int[][] F = {
-  { 3,    3,    3|S2 },
-  { 2,    1,    2|S2 },
-  { 3,    2|S2, 3 },
-  { 2|S2, 2,    2 },
-  { _,    3|S2, 3|S2 },
-};
-final int[][] S = {
-  { _, _, _, 1 },
-  { 1, _, 1, 1 },
-  { 1, _, _, _ },
-  { 1, 2, _, _ },
-  { _, 1, _, _ },
-};
-final int[][] T = {
-  { 3,    1,    _ },
-  { 4|S2, 3|S3, _ },
-  { _,    2|S2, 2 },
-  { 2|S2, _,    _ },
-};
-
-final boolean _0 = false;
-final boolean _1 = true;
-
-final boolean[][][] P = {
-  {
-    { _1, _1, _1 },
-    { _0, _1, _0 },
-    { _0, _1, _0 },
-    { _0, _1, _0 },
-    { _1, _1, _1 },
-  },
-  {
-    { _1, _1, _0 },
-    { _1, _0, _1 },
-    { _1, _0, _1 },
-    { _1, _1, _0 },
-    { _1, _0, _0 },
-  },
-  {
-    { _1, _1, _1 },
-    { _1, _0, _0 },
-    { _1, _1, _1 },
-    { _0, _0, _1 },
-    { _1, _1, _1 },
-  },
-  {
-    { _0, _0, _1 },
-    { _0, _0, _1 },
-    { _1, _0, _1 },
-    { _1, _0, _1 },
-    { _1, _1, _1 },
-  },
-};
-
-final int W = F[0].length;
-final int H = F.length;
-final int D = T.length;
 
 // labels for each face
 final int FRONT = 0;
@@ -100,6 +59,7 @@ Camera camera;
 
 void setup(){
   size(400, 400, P3D);
+  new Loader().loadInstance(files[selectedFile]);
   model  = new Model();
   view   = new View();
   camera = new Camera();
@@ -160,6 +120,12 @@ void keyTyped() {
   }
   else if (key == ')') {
     model.eraseZero();
+  }
+  else if (key == 'F' || key == 'B') {
+    selectedFile += (key == 'F' ? 1 : -1);
+    selectedFile = (selectedFile + files.length) % files.length;
+    new Loader().loadInstance(files[selectedFile]);
+    model = new Model();
   }
 }
 

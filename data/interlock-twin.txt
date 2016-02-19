@@ -1,0 +1,11 @@
+# twin “interlocks” for conveying the truth of a variable
+
+# FRONT
+. . . . 1 . . . .
+
+# SIDE
+(3) (3)
+
+# TOP
+. . 1 . . 0 0 0 0
+0 0 0 0 . . 1 . .

@@ -18,6 +18,7 @@ A program for illustrating 3D Picross instances.
 * Press 'a': Show the answer.
 * Press '0': Make the cubes transparent in the rows with hint "0".
 * Press ')': Erase the cubes in the rows with hint "0".
+* Press 'F' or 'B': Move to another puzzle instance.
 
 
 ## References

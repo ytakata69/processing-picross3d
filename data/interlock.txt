@@ -1,0 +1,10 @@
+# an “interlock” for conveying the truth of a variable
+
+# FRONT
+. . . . . . . . .
+
+# SIDE
+(3)
+
+# TOP
+0 0 0 0 . . 1 . .

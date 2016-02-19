@@ -1,0 +1,10 @@
+# truth assignment
+
+# FRONT
+. . . . . . . .
+
+# SIDE
+1
+
+# TOP
+0 0 0 . . 0 0 0
