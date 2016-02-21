@@ -25,6 +25,7 @@ String[] files = {
   "second-floor-mod.txt",
   "interlock.txt",
   "interlock-twin.txt",
+  "interlock-clause.txt",
 };
 int selectedFile = 0;
 
