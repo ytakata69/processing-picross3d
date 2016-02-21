@@ -76,6 +76,7 @@ class View {
     new PVector(0, 1, 0),
     new PVector(0, 0, 1)
   };
+  final PVector centerPos = new PVector(0, 0, 0);
 
   // Distance between the camera and a given cube.
   float distToTouchedPoint(int x, int y, int z) {
@@ -96,6 +97,15 @@ class View {
     }
     popMatrix();
     return distance;
+  }
+
+  // Draw a caption label
+  void drawLabel(String label) {
+    PVector labelPos = getUnProjectedPointOnFloor(width/2, 15, centerPos, unitVecs[2]);
+    textSize(24);
+    textAlign(CENTER, CENTER);
+    fill(0);
+    text(label, labelPos.x, labelPos.y, labelPos.z);
   }
 }
 

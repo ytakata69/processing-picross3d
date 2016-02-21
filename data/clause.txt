@@ -1,4 +1,5 @@
 # deciding the truth of each clause
+# LABEL (x1 | !x2 | x3) & (!x1 | !x3 | x4)
 
 # FRONT
 . 1 . 1 1 . 1 . . 1 1 . . . .

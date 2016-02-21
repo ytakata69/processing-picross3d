@@ -34,6 +34,8 @@ int[][] F, S, T;
 int W, H, D;
 // An answer
 boolean[][][] P;
+// Caption label
+String label;
 
 // Define the hints.
 final int S2 = (1 << 8); // circle
@@ -92,6 +94,11 @@ void draw(){
 
   // cubes
   model.draw(view);
+
+  // caption label
+  if (label != null) {
+    view.drawLabel(label);
+  }
 }
 
 void mousePressed() {

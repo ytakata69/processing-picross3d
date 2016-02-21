@@ -22,6 +22,7 @@ class Loader {
         }
       }
     }
+    label = getLabel(lines);
   }
 
   // Split a list of strings into sections.
@@ -71,5 +72,16 @@ class Loader {
       }
     }
     return oneLine;
+  }
+
+  private String getLabel(String[] lines) {
+    for (int i = 0; i < lines.length; i++) {
+      if (lines[i].length() >= 8 &&
+          lines[i].substring(0, 8).equals("# LABEL "))
+      {
+        return lines[i].substring(8);
+      }
+    }
+    return null;
   }
 }
