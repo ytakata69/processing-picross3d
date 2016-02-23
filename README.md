@@ -3,6 +3,8 @@
 A program for illustrating 3D Picross instances.
 
 ## Install & Run
+You need [Processing](https://processing.org/) Development Environment to compile and run this program.
+
 1. Clone the repository or download the zip file.
 1. Rename the folder containing the .pde files "picross3d"
    instead of "processing-picross3d".
@@ -29,3 +31,4 @@ A program for illustrating 3D Picross instances.
 * Kougaku-navi. "Compute the world-coordinates corresponding to
   the screen-coordinates,"
   <http://d.hatena.ne.jp/kougaku-navi/20160102/p1>
+* Processing.org. <https://processing.org/>
