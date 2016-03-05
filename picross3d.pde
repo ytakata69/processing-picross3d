@@ -135,6 +135,9 @@ void keyTyped() {
     new Loader().loadInstance(files[selectedFile]);
     model = new Model();
   }
+  else if (key == 'S') {
+    new SATEncoder().scan(model);
+  }
 }
 
 boolean hintIsEpsilon(int h) {
