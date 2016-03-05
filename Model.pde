@@ -113,80 +113,99 @@ class Model {
 
   // Check the conformity to the hints.
   boolean isAnswer() {
-    return conformsToHint(F, FRONT)
-        && conformsToHint(S, SIDE)
-        && conformsToHint(T, TOP);
-  }
-
-  private boolean conformsToHint(int[][] hnt, int face) {
-    for (int i = 0; i < hnt.length; i++) {
-      for (int j = 0; j < hnt[i].length; j++) {
-        int h = hnt[i][j];
-        if (hintIsEpsilon(h)) continue;
-        boolean conf =
-          (face == FRONT ? rowConformsToHint(h, j, i, 0,     0, 0, 1, D)
-          :face == SIDE  ? rowConformsToHint(h, 0, i, D-1-j, 1, 0, 0, W)
-                         : rowConformsToHint(h, j, 0, i,     0, 1, 0, H));
-        if (! conf) { return false; }
-      }
-    }
-    return true;
-  }
-  private boolean rowConformsToHint(int h, int x, int y, int z, int vx, int vy, int vz, int depth) {
-    int n = 0;
-    int nSeg = 0;
-    boolean prev = false;
-    for (int i = 0; i < depth; i++) {
-      if (cubeExists(x, y, z)) {
-        n++;
-        if (! prev) { nSeg++; }
-        prev = true;
-      } else {
-        prev = false;
-      }
-      x += vx;
-      y += vy;
-      z += vz;
-    }
-    return n == hintN(h) && (n == 0 || min(nSeg, 3) == hintSeg(h));
+    ConformityChecker checker = new ConformityChecker();
+    scanCubes(checker);
+    return checker.success();
   }
 
   // Make the cubes with hint zero transparent.
   void clearZero() {
-    eraseZeroRows(F, FRONT, false);
-    eraseZeroRows(S, SIDE,  false);
-    eraseZeroRows(T, TOP,   false);
+    scanCubes(new ZeroEraser(false));
   }
 
   // Erase the cubes in the rows with the hint zero.
   void eraseZero() {
     int usize = undoBuffer.size();
-    eraseZeroRows(F, FRONT, true);
-    eraseZeroRows(S, SIDE,  true);
-    eraseZeroRows(T, TOP,   true);
+    scanCubes(new ZeroEraser(true));
     usize = undoBuffer.size() - usize;
     if (usize > 0) {
       undoBuffer.append(-usize);
     }
   }
-  private void eraseZeroRows(int[][] hnt, int face, boolean erase) {
+
+  // Make a scanner look through the cubes.
+  void scanCubes(Scanner scanner) {
+    scanCubesFromFace(F, FRONT, scanner);
+    scanCubesFromFace(S, SIDE,  scanner);
+    scanCubesFromFace(T, TOP,   scanner);
+  }
+  private void scanCubesFromFace(int[][] hnt, int face, Scanner scanner) {
     for (int i = 0; i < hnt.length; i++) {
       for (int j = 0; j < hnt[i].length; j++) {
         int h = hnt[i][j];
-        if (hintIsEpsilon(h) || hintN(h) != 0) continue;
+        if (hintIsEpsilon(h)) continue;
+        scanner.beginRow(h);
         if (face == FRONT) {
-          eraseZeroRow(j, i, 0,     0, 0, 1, D, erase);
+          scanRow(j, i, 0,     0, 0, 1, D, scanner);
         } else if (face == SIDE) {
-          eraseZeroRow(0, i, D-1-j, 1, 0, 0, W, erase);
+          scanRow(0, i, D-1-j, 1, 0, 0, W, scanner);
         } else {
-          eraseZeroRow(j, 0, i,     0, 1, 0, H, erase);
+          scanRow(j, 0, i,     0, 1, 0, H, scanner);
         }
+        scanner.endRow();
       }
     }
   }
-  private void eraseZeroRow(int x, int y, int z, int vx, int vy, int vz, int depth, boolean erase) {
+  private void scanRow(int x, int y, int z, int vx, int vy, int vz, int depth, Scanner scanner) {
     for (int i = 0; i < depth; i++) {
-      if (cubeExists(x, y, z)) {
+      scanner.examCube(x, y, z, cubeExists(x, y, z));
+      x += vx;
+      y += vy;
+      z += vz;
+    }
+  }
+  abstract class Scanner {
+    abstract void examCube(int x, int y, int z, boolean exist);
+    void beginRow(int hint) {}
+    void endRow() {}
+  }
+  class ConformityChecker extends Scanner {
+    int hint;
+    boolean conform = true;
+    int n, nSeg;
+    boolean prevExist;
+    void beginRow(int hint_) {
+      hint = hint_;
+      n = 0;
+      nSeg = 0;
+      prevExist = false;
+    }
+    void examCube(int x, int y, int z, boolean exist) {
+      if (exist) {
+        n++;
+        if (! prevExist) { nSeg++; }
+      }
+      prevExist = exist;
+    }
+    void endRow() {
+      conform &=
+        (n == hintN(hint) && (n == 0 || min(nSeg, 3) == hintSeg(hint)));
+    }
+    boolean success() {
+      return conform;
+    }
+  }
+  class ZeroEraser extends Scanner {
+    boolean erase;
+    boolean zero;
+    ZeroEraser(boolean erase_) {
+      erase = erase_;
+    }
+    void beginRow(int hint) {
+      zero = (hintN(hint) == 0);
+    }
+    void examCube(int x, int y, int z, boolean exist) {
+      if (zero && exist) {
         int pos = x + W * (y + H * z);
         if (erase) {
           eraseCube(pos);
@@ -194,9 +213,6 @@ class Model {
           mark[pos] = MK_CLEAR;
         }
       }
-      x += vx;
-      y += vy;
-      z += vz;
     }
   }
 }
