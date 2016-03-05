@@ -7,6 +7,10 @@ class Model {
     reset();
   }
 
+  int coordToPos(int x, int y, int z) {
+    return x + W * (y + H * z);
+  }
+
   void reset() {
     for (int i = 0; i < body.length; i++) {
       body[i] = true;
@@ -88,7 +92,7 @@ class Model {
   }
 
   boolean cubeExists(int x, int y, int z) {
-    return cubeExists(x + W * (y + H * z));
+    return cubeExists(coordToPos(x, y, z));
   }
 
   void draw(View view) {
@@ -114,73 +118,37 @@ class Model {
   // Check the conformity to the hints.
   boolean isAnswer() {
     ConformityChecker checker = new ConformityChecker();
-    scanCubes(checker);
+    checker.scan(this);
     return checker.success();
   }
 
   // Make the cubes with hint zero transparent.
   void clearZero() {
-    scanCubes(new ZeroEraser(false));
+    new ZeroEraser(false).scan(this);
   }
 
   // Erase the cubes in the rows with the hint zero.
   void eraseZero() {
     int usize = undoBuffer.size();
-    scanCubes(new ZeroEraser(true));
+    new ZeroEraser(true).scan(this);
     usize = undoBuffer.size() - usize;
     if (usize > 0) {
       undoBuffer.append(-usize);
     }
   }
 
-  // Make a scanner look through the cubes.
-  void scanCubes(Scanner scanner) {
-    scanCubesFromFace(F, FRONT, scanner);
-    scanCubesFromFace(S, SIDE,  scanner);
-    scanCubesFromFace(T, TOP,   scanner);
-  }
-  private void scanCubesFromFace(int[][] hnt, int face, Scanner scanner) {
-    for (int i = 0; i < hnt.length; i++) {
-      for (int j = 0; j < hnt[i].length; j++) {
-        int h = hnt[i][j];
-        if (hintIsEpsilon(h)) continue;
-        scanner.beginRow(h);
-        if (face == FRONT) {
-          scanRow(j, i, 0,     0, 0, 1, D, scanner);
-        } else if (face == SIDE) {
-          scanRow(0, i, D-1-j, 1, 0, 0, W, scanner);
-        } else {
-          scanRow(j, 0, i,     0, 1, 0, H, scanner);
-        }
-        scanner.endRow();
-      }
-    }
-  }
-  private void scanRow(int x, int y, int z, int vx, int vy, int vz, int depth, Scanner scanner) {
-    for (int i = 0; i < depth; i++) {
-      scanner.examCube(x, y, z, cubeExists(x, y, z));
-      x += vx;
-      y += vy;
-      z += vz;
-    }
-  }
-  abstract class Scanner {
-    abstract void examCube(int x, int y, int z, boolean exist);
-    void beginRow(int hint) {}
-    void endRow() {}
-  }
-  class ConformityChecker extends Scanner {
+  class ConformityChecker extends ModelScanner {
     int hint;
     boolean conform = true;
     int n, nSeg;
     boolean prevExist;
-    void beginRow(int hint_) {
+    void beginRow(int hint_, int depth) {
       hint = hint_;
       n = 0;
       nSeg = 0;
       prevExist = false;
     }
-    void examCube(int x, int y, int z, boolean exist) {
+    void examCube(int i, int x, int y, int z, boolean exist) {
       if (exist) {
         n++;
         if (! prevExist) { nSeg++; }
@@ -195,24 +163,66 @@ class Model {
       return conform;
     }
   }
-  class ZeroEraser extends Scanner {
+  class ZeroEraser extends ModelScanner {
     boolean erase;
     boolean zero;
     ZeroEraser(boolean erase_) {
       erase = erase_;
     }
-    void beginRow(int hint) {
+    void beginRow(int hint, int depth) {
       zero = (hintN(hint) == 0);
     }
-    void examCube(int x, int y, int z, boolean exist) {
+    void examCube(int i, int x, int y, int z, boolean exist) {
       if (zero && exist) {
-        int pos = x + W * (y + H * z);
+        int pos = coordToPos(x, y, z);
         if (erase) {
           eraseCube(pos);
         } else {
           mark[pos] = MK_CLEAR;
         }
       }
+    }
+  }
+}
+
+abstract class ModelScanner {
+  abstract void examCube(int i, int x, int y, int z, boolean exist);
+  void beginRow(int hint, int depth) {}
+  void endRow() {}
+  protected Model model;
+
+  // Look through the cubes.
+  void scan(Model model_) {
+    model = model_;
+    scanFace(F, FRONT);
+    scanFace(S, SIDE);
+    scanFace(T, TOP);
+  }
+  private void scanFace(int[][] hnt, int face) {
+    for (int i = 0; i < hnt.length; i++) {
+      for (int j = 0; j < hnt[i].length; j++) {
+        int h = hnt[i][j];
+        if (hintIsEpsilon(h)) continue;
+        if (face == FRONT) {
+          beginRow(h, D);
+          scanRow(j, i, 0,     0, 0, 1, D);
+        } else if (face == SIDE) {
+          beginRow(h, W);
+          scanRow(0, i, D-1-j, 1, 0, 0, W);
+        } else {
+          beginRow(h, H);
+          scanRow(j, 0, i,     0, 1, 0, H);
+        }
+        endRow();
+      }
+    }
+  }
+  private void scanRow(int x, int y, int z, int vx, int vy, int vz, int depth) {
+    for (int i = 0; i < depth; i++) {
+      examCube(i, x, y, z, model.cubeExists(x, y, z));
+      x += vx;
+      y += vy;
+      z += vz;
     }
   }
 }
