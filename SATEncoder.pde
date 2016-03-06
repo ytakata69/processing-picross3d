@@ -1,6 +1,9 @@
 // 立体ピクロス問題をSAT問題に変換する.
 class SATEncoder extends ModelScanner {
-  final String outputFile = "sat.cnf";
+  final String outputFile = sketchPath("sat/p3d.cnf");
+  final String solverCmd  = sketchPath("sat/solve.sh");
+
+  // 節のリスト. 節は変数の内部番号の集合.
   ArrayList<int[]> clauses = new ArrayList<int[]>();
 
   // 命題変数集合
@@ -39,35 +42,30 @@ class SATEncoder extends ModelScanner {
       {  varC.get(depth-1, hintN(hint)) },
       { -varC.get(depth-1, hintN(hint)+1) }
     });
-    int nSeg = hintSeg(hint);
-    addClauses(new int[][] {
-      { varS.get(depth-1, nSeg) } // nSeg以上
-    });
-    if (nSeg < 3) {
-      addClauses(new int[][] {
-        { -varS.get(depth-1, nSeg+1) } // nSeg+1未満
-      });
-    }
-    printClauses();
-  }
-
-  void printClauses() {
-    PrintWriter out = createWriter(outputFile);
-    out.println("p cnf " + nVar + " " + clauses.size());
-    for (int i = 0; i < clauses.size(); i++) {
-      int[] cl = clauses.get(i);
-      for (int j = 0; j < cl.length; j++) {
-        out.print(cl[j] + " ");
+    if (hintN(hint) > 0) {
+      int nSeg = hintSeg(hint);
+      addClause(new int[] { varS.get(depth-1, nSeg) }); // nSeg以上
+      if (nSeg < 3) {
+        addClause(new int[] { -varS.get(depth-1, nSeg+1) }); // nSeg+1未満
       }
-      out.println("0");
     }
-    out.flush();
-    out.close();
+  }
+  // Solve the problem using a SAT solver.
+  void endScan() {
+    addAnotherSolutionConstraint();
+    printClauses();
+    IntList ls = runSolver();
+    if (ls != null) {
+      model.setAnswer(ls);
+    }
   }
 
-  private void addClauses(int[][] vs) {
-    for (int i = 0; i < vs.length; i++) {
-      clauses.add(vs[i]);
+  private void addClause(int[] vs) {
+    clauses.add(vs);
+  }
+  private void addClauses(int[][] vss) {
+    for (int i = 0; i < vss.length; i++) {
+      addClause(vss[i]);
     }
   }
   private int[][] constraintForBlock(int i, int j, int pos) {
@@ -128,6 +126,29 @@ class SATEncoder extends ModelScanner {
     }
   }
 
+  private void addAnotherSolutionConstraint() {
+    int nPos = W * H * D;
+    int[] vs = new int[nPos];
+    for (int i = 0; i < nPos; i++) {
+      vs[i] = (model.cubeExists(i) ? -1 : 1) * varX.get(i);
+    }
+    addClause(vs);
+  }
+
+  private void printClauses() {
+    PrintWriter out = createWriter(outputFile);
+    out.println("p cnf " + nVar + " " + clauses.size());
+    for (int i = 0; i < clauses.size(); i++) {
+      int[] cl = clauses.get(i);
+      for (int j = 0; j < cl.length; j++) {
+        out.print(cl[j] + " ");
+      }
+      out.println("0");
+    }
+    out.flush();
+    out.close();
+  }
+
   // m×n個の命題変数を新たに確保する.
   VarSet getVarSet(int m, int n) {
     VarSet vs = new VarSet(nVar + 1, m, n);
@@ -163,6 +184,42 @@ class SATEncoder extends ModelScanner {
     int get(int i) {
       return get(i, 0);
     }
+  }
+
+  private IntList runSolver() {
+    IntList ls = null;
+    int n = W * H * D;
+    String[] cmd = { "/bin/sh", solverCmd, "" + n, outputFile };
+    try {
+      Runtime rt = Runtime.getRuntime();
+      Process proc = rt.exec(cmd);
+      ls = readSolution(proc.getInputStream());
+      proc.waitFor();
+    } catch (Exception e) {
+      println(e);
+    }
+    return ls;
+  }
+  private IntList readSolution(InputStream in) throws Exception {
+    IntList ls = new IntList();
+    BufferedReader reader = new BufferedReader(new java.io.InputStreamReader(in));
+    boolean solved = false;
+    String ln;
+    while ((ln = reader.readLine()) != null) {
+      if (ln.equals("SAT")) {
+        solved = true;
+        continue;
+      }
+      else if (ln.equals("UNSAT")) {
+        println("No (other) solution");
+        return null;
+      }
+      if (solved) {
+        int pos = int(ln) - 1;
+        ls.append(pos);
+      }
+    }
+    return ls;
   }
 }
 

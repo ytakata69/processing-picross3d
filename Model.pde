@@ -31,6 +31,14 @@ class Model {
       body[i] = P[D-1-z][y][x];
     }
   }
+  void setAnswer(IntList ls) {
+    for (int i = 0; i < body.length; i++) {
+      body[i] = false;
+    }
+    for (int i = 0; i < ls.size(); i++) {
+      body[ls.get(i)] = true;
+    }
+  }
 
   IntList undoBuffer = new IntList();
 
@@ -189,6 +197,7 @@ abstract class ModelScanner {
   abstract void examCube(int i, int x, int y, int z, boolean exist);
   void beginRow(int hint, int depth) {}
   void endRow() {}
+  void endScan() {}
   protected Model model;
 
   // Look through the cubes.
@@ -197,6 +206,7 @@ abstract class ModelScanner {
     scanFace(F, FRONT);
     scanFace(S, SIDE);
     scanFace(T, TOP);
+    endScan();
   }
   private void scanFace(int[][] hnt, int face) {
     for (int i = 0; i < hnt.length; i++) {
