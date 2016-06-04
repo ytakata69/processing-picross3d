@@ -12,6 +12,7 @@
  * <li>Press 'a': Show the answer.</li>
  * <li>Press '0': Make the cubes transparent in the rows with hint "0".</li>
  * <li>Press ')': Erase the cubes in the rows with hint "0".</li>
+ * <li>Press 'S': Solve the puzzle instance using a SAT solver.</li>
  * <li>Press 'F' or 'B': Move to another puzzle instance.</li>
  * </ul>
  */
@@ -115,7 +116,9 @@ void mousePressed() {
 
 void keyTyped() {
   if (key == 'a' || key == 'A') {
-    model.setAnswer(P);
+    if (P != null) {
+      model.setAnswer(P);
+    }
   }
   else if (key == 'u' || key == 'U') {
     model.undo();
@@ -134,6 +137,9 @@ void keyTyped() {
     selectedFile = (selectedFile + files.length) % files.length;
     new Loader().loadInstance(files[selectedFile]);
     model = new Model();
+  }
+  else if (key == 'S') {
+    new SATEncoder().scan(model);
   }
 }
 
