@@ -1,6 +1,6 @@
 # processing-picross3d
 
-<img src="https://raw.github.com/wiki/ytakata69/picross3d-screen.png" width="320" alt="" />
+<img src="https://raw.github.com/wiki/ytakata69/processing-picross3d/picross3d-screen.png" width="320" alt="" />
 
 A program for illustrating 3D Picross instances.
 
