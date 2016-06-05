@@ -2,11 +2,11 @@
 
 <img src="https://raw.github.com/wiki/ytakata69/processing-picross3d/picross3d-screen.png" width="320" alt="" />
 
-A program for illustrating [3D Picross](https://www.nintendo.co.jp/ds/c6pj/) instances.
+A program for illustrating [Picross-3D](https://www.nintendo.co.jp/ds/c6pj/) instances.
 
 Though this is mainly for demonstration, you can play the puzzle more or less.
 If you have installed a SAT solver such as [MiniSat](http://minisat.se),
-you can also solve puzzle instances using it.
+you can also solve puzzle instances using the solver.
 
 ## Install & Run
 You need [Processing](https://processing.org/) Development Environment to compile and run this program.
