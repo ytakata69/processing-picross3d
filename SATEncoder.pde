@@ -1,7 +1,7 @@
 // 立体ピクロス問題をSAT問題に変換する.
 class SATEncoder extends ModelScanner {
-  final String outputFile = sketchPath("sat/p3d.cnf");
-  final String solverCmd  = sketchPath("sat/solve.sh");
+  final String outputFile = dataPath("sat/p3d.cnf");
+  final String solverCmd  = dataPath("sat/solve.sh");
 
   // 節のリスト. 節は変数の内部番号の集合.
   ArrayList<int[]> clauses = new ArrayList<int[]>();
